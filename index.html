@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tito's - Sistema Veterinario</title>
+  <meta name="description" content="Aplicación de gestión veterinaria funcional para dueños de mascotas y profesionales de la salud.">
+  <link rel="stylesheet" href="style.css">
+  <script src="icons.js" defer></script>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- 1. PANTALLA DE BIENVENIDA -->
+    <div id="screen-welcome" class="screen auth-screen active">
+      <div class="auth-logo-section">
+        <h1 class="auth-logo-text">Tito's</h1>
+        <div class="auth-illustration-paw" data-icon="paw" data-icon-size="90"></div>
+      </div>
+      <div class="auth-form">
+        <button id="btn-welcome-create" class="btn-white" style="margin-bottom: 15px;">Crear Cuenta</button>
+        <p class="auth-footer">¿Ya tenés cuenta? <a id="link-welcome-login">Inicia Sesión</a></p>
+      </div>
+    </div>
+
+    <!-- 2. PANTALLA DE REGISTRO -->
+    <div id="screen-register" class="screen auth-screen">
+      <div class="auth-logo-section">
+        <h1 class="auth-logo-text">Tito's</h1>
+      </div>
+      <form id="form-register" class="auth-form" onsubmit="event.preventDefault();">
+        <div class="auth-input-group">
+          <label for="reg-username">Nombre de usuario</label>
+          <input type="text" id="reg-username" required placeholder="ej. belen_fenoy">
+        </div>
+        <div class="auth-input-group">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" required placeholder="ej. belen@gmail.com">
+        </div>
+        <div class="auth-input-group">
+          <label for="reg-password">Contraseña</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="reg-password" required placeholder="••••••••">
+            <button type="button" class="password-toggle-btn" id="btn-toggle-reg-pass" tabindex="-1" aria-label="Mostrar contraseña">
+              <span data-icon="eye" data-icon-size="20"></span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Distinción de Rol en Registro -->
+        <div class="auth-input-group">
+          <label for="reg-role">Registrarme como</label>
+          <select id="reg-role" required>
+            <option value="propietario">Propietario / Dueño de Mascota</option>
+            <option value="veterinario">Veterinario Profesional</option>
+          </select>
+        </div>
+
+        <!-- Campos específicos para Veterinario -->
+        <div id="reg-vet-fields" style="display: none; margin-top: 15px; border-top: 1px dashed rgba(255, 255, 255, 0.3); padding-top: 15px;">
+          <div class="auth-input-group">
+            <label for="reg-matricula">Número de Matrícula</label>
+            <input type="number" id="reg-matricula" placeholder="ej. 112233">
+          </div>
+          <div class="auth-input-group">
+            <label for="reg-especialidad">Especialidad</label>
+            <input type="text" id="reg-especialidad" placeholder="ej. Dermatología, Medicina General">
+          </div>
+        </div>
+
+        <div class="auth-checkbox-group" style="margin-top: 15px;">
+          <input type="checkbox" id="reg-remember" checked>
+          <label for="reg-remember">Recordar contraseña</label>
+        </div>
+        
+        <button type="submit" id="btn-submit-register" class="btn-orange">Registrar</button>
+      </form>
+      <p class="auth-footer">¿Ya tenés una cuenta? <a id="link-register-login">Inicia Sesión</a></p>
+    </div>
+
+    <!-- 3. PANTALLA DE INICIO DE SESIÓN -->
+    <div id="screen-login" class="screen auth-screen">
+      <div class="auth-logo-section">
+        <h1 class="auth-logo-text">Tito's</h1>
+      </div>
+      <form id="form-login" class="auth-form" onsubmit="event.preventDefault();">
+        <div class="auth-input-group">
+          <label for="login-username">Nombre de usuario o Email</label>
+          <input type="text" id="login-username" required placeholder="ej. belen">
+        </div>
+        <div class="auth-input-group">
+          <label for="login-password">Contraseña</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="login-password" required placeholder="••••••••">
+            <button type="button" class="password-toggle-btn" id="btn-toggle-login-pass" tabindex="-1" aria-label="Mostrar contraseña">
+              <span data-icon="eye" data-icon-size="20"></span>
+            </button>
+          </div>
+        </div>
+        
+
+        <!-- Distinción de Rol en Login -->
+        <div class="auth-input-group">
+          <label for="login-role">Ingresar como</label>
+          <select id="login-role" required>
+            <option value="propietario">Propietario / Dueño de Mascota</option>
+            <option value="veterinario">Veterinario Profesional</option>
+          </select>
+        </div>
+
+        <!-- Recordar contraseña en Login -->
+        <div class="auth-checkbox-group" style="margin-top: 15px;">
+          <input type="checkbox" id="login-remember" checked>
+          <label for="login-remember">Recordar contraseña</label>
+        </div>
+
+        <a id="link-login-forgot" class="auth-link">Olvidé mi contraseña</a>
+        <button type="submit" id="btn-submit-login" class="btn-orange" style="margin-top: 20px;">Iniciar Sesión</button>
+      </form>
+      <p class="auth-footer">¿Todavía no tenés una cuenta? <a id="link-login-register">Registrate</a></p>
+    </div>
+
+    <!-- 4. PANTALLA DE RECUPERAR CONTRASEÑA -->
+    <div id="screen-forgot" class="screen auth-screen">
+      <div class="auth-logo-section">
+        <h1 class="auth-logo-text">Tito's</h1>
+      </div>
+      <div class="auth-form">
+        <p style="margin-bottom: 20px; font-size: 14px; color: rgba(255,255,255,0.9); line-height: 1.5;">
+          Ingresá tu dirección de email y te enviaremos un link para restablecer tu contraseña.
+        </p>
+        <form id="form-forgot" onsubmit="event.preventDefault();">
+          <div class="auth-input-group">
+            <label for="forgot-email">Email</label>
+            <input type="email" id="forgot-email" required placeholder="ej. tuemail@gmail.com">
+          </div>
+          <button type="submit" class="btn-orange" style="margin-top: 10px;">Restablecer contraseña</button>
+        </form>
+      </div>
+      <p class="auth-footer"><a id="link-forgot-login">Volver a Iniciar Sesión</a></p>
+    </div>
+
+    <!-- 5. PANTALLA PRINCIPAL DE LA APLICACIÓN (LOGUEADO) -->
+    <div id="screen-main" class="screen" style="padding: 0;">
+      <!-- Barra superior / Header -->
+      <header class="app-header">
+        <div class="app-title-logo">Tito's</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span id="header-role-badge" class="role-badge">Dueño</span>
+          <button id="btn-logout-header" class="btn-icon" title="Cerrar sesión"><span data-icon="logout" data-icon-size="18"></span></button>
+        </div>
+      </header>
+
+      <!-- Panel de salida / alerta de sesión -->
+      <div class="logout-bar" style="display:none;">
+        <span id="logout-user-greeting">Hola, Belén</span>
+        <button id="btn-logout-bar-action" class="btn-logout">Cerrar Sesión</button>
+      </div>
+
+      <!-- Contenedor dinámico de vistas -->
+      <main class="main-content">
+
+        <!-- ================= VISTAS DEL DUEÑO DE MASCOTAS ================= -->
+
+        <!-- A. Vista: Mi Mascota -->
+        <div id="view-owner-mascota" class="app-view">
+          <div class="view-title-section">
+            <h2 class="view-title">Mi Mascota</h2>
+            <p class="view-subtitle">Ficha Mascota</p>
+          </div>
+
+          <!-- Selector de mascotas del dueño -->
+          <div id="pet-switcher-container" class="pet-switcher">
+            <!-- Renderizado dinámico de botones de mascotas -->
+          </div>
+
+          <div id="pet-details-container">
+            <!-- Ficha técnica de mascota se renderiza dinámicamente -->
+          </div>
+
+          <div class="action-btn-container">
+            <button id="btn-action-add-pet" class="btn-round">
+              <span>Agregar Mascota</span>
+              <span data-icon="plus" data-icon-size="18"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- B. Vista: Mis Turnos -->
+        <div id="view-owner-turnos" class="app-view" style="display:none;">
+          <div class="view-title-section">
+            <h2 class="view-title">Turnos</h2>
+            <p class="view-subtitle">Mis Turnos</p>
+          </div>
+
+          <div id="appt-list-container">
+            <!-- Turnos se renderizan dinámicamente -->
+          </div>
+
+          <div class="action-btn-container">
+            <button id="btn-action-new-appt" class="btn-round">
+              <span>Nuevo Turno</span>
+              <span data-icon="plus" data-icon-size="18"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- C. Vista: Veterinarios (Equipo Médico) -->
+        <div id="view-owner-vets" class="app-view" style="display:none;">
+          <div class="view-title-section">
+            <h2 class="view-title">Veterinarios</h2>
+            <p class="view-subtitle">Equipo Médico</p>
+          </div>
+
+          <div id="vets-list-container">
+            <!-- Lista de veterinarios se renderiza dinámicamente -->
+          </div>
+        </div>
+
+        <!-- D. Vista: Contacto -->
+        <div id="view-owner-contacto" class="app-view" style="display:none;">
+          <div class="view-title-section">
+            <h2 class="view-title">Contacto</h2>
+            <p class="view-subtitle">Datos de la veterinaria</p>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon" data-icon="mapPin" data-icon-size="22"></div>
+            <div class="contact-text">
+              <h4>Dirección</h4>
+              <p>Bacacay 3276, CABA</p>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon" data-icon="clock" data-icon-size="22"></div>
+            <div class="contact-text">
+              <h4>Horarios de Atención</h4>
+              <p>8:00 AM - 10:00 PM</p>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon" data-icon="message" data-icon-size="22"></div>
+            <div class="contact-text">
+              <h4>WhatsApp</h4>
+              <p>11 6879 0426</p>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon" data-icon="atSign" data-icon-size="22"></div>
+            <div class="contact-text">
+              <h4>Instagram</h4>
+              <p>@titoshop</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- E. Vista: Mi Cuenta -->
+        <div id="view-owner-cuenta" class="app-view" style="display:none;">
+          <div class="view-title-section">
+            <h2 class="view-title">Mi Cuenta</h2>
+            <p class="view-subtitle">Datos de mi cuenta</p>
+          </div>
+
+          <div class="profile-card-header">
+            <div class="avatar-editable-wrapper">
+              <div class="profile-avatar" id="owner-avatar-display"><span data-icon="user" data-icon-size="40"></span></div>
+              <button type="button" class="avatar-edit-btn" id="btn-edit-owner-avatar" title="Cambiar foto de perfil"><span data-icon="camera" data-icon-size="15"></span></button>
+            </div>
+            <h3 id="profile-display-name" class="profile-name">Belén Fenoy</h3>
+            <p id="profile-display-email" class="profile-email">belen@gmail.com</p>
+            <button id="btn-toggle-edit-profile" class="edit-mode-btn"><span data-icon="pencil" data-icon-size="14"></span> Editar Datos</button>
+          </div>
+
+          <form id="form-profile-owner" class="data-card" onsubmit="event.preventDefault();">
+            <div class="form-group-editable">
+              <label for="prof-nombre">Nombre Completo</label>
+              <input type="text" id="prof-nombre" disabled>
+            </div>
+            <div class="form-group-editable">
+              <label for="prof-dni">DNI del Propietario</label>
+              <input type="number" id="prof-dni" disabled>
+            </div>
+            <div class="form-group-editable">
+              <label for="prof-telefono">Número de Teléfono</label>
+              <input type="number" id="prof-telefono" disabled>
+            </div>
+            <div class="info-section-title">Dirección</div>
+            <div class="grid-2">
+              <div class="form-group-editable">
+                <label for="prof-calle">Calle</label>
+                <input type="text" id="prof-calle" disabled>
+              </div>
+              <div class="form-group-editable">
+                <label for="prof-altura">Altura</label>
+                <input type="number" id="prof-altura" disabled>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group-editable">
+                <label for="prof-piso">Piso</label>
+                <input type="number" id="prof-piso" disabled>
+              </div>
+              <div class="form-group-editable">
+                <label for="prof-localidad">Localidad</label>
+                <input type="text" id="prof-localidad" disabled>
+              </div>
+            </div>
+            <div class="form-group-editable">
+              <label for="prof-cp">Código Postal</label>
+              <input type="number" id="prof-cp" disabled>
+            </div>
+
+            <button type="submit" id="btn-save-profile" class="btn-orange" style="display:none; width:100%; margin-top:15px;">Guardar Cambios</button>
+          </form>
+        </div>
+
+
+        <!-- ================= VISTAS DEL VETERINARIO ================= -->
+
+        <!-- F. Vista: Agenda Veterinaria -->
+        <div id="view-vet-agenda" class="app-view" style="display:none;">
+          <div class="view-title-section">
+            <h2 class="view-title">Agenda</h2>
+            <p class="view-subtitle">Mis Turnos Asignados</p>
+          </div>
+
+          <div id="vet-appt-list-container">
+            <!-- Turnos del veterinario cargados dinámicamente -->
+          </div>
+        </div>
+
+        <!-- G. Vista: Buscador de Pacientes -->
+        <div id="view-vet-pacientes" class="app-view" style="display:none;">
+          <div class="view-title-section">
+            <h2 class="view-title">Pacientes</h2>
+            <p class="view-subtitle">Buscador Médico</p>
+          </div>
+
+          <div class="search-container">
+            <input type="text" id="input-patient-search" class="search-input" placeholder="Buscar por mascota, raza o dueño...">
+            <span class="search-icon-btn" data-icon="search" data-icon-size="18"></span>
+          </div>
+
+          <div id="patient-list-container" class="patient-list">
+            <!-- Lista de pacientes cargada dinámicamente -->
+          </div>
+        </div>
+
+        <!-- H. Vista: Perfil Profesional -->
+        <div id="view-vet-perfil" class="app-view" style="display:none;">
+          <div class="view-title-section">
+            <h2 class="view-title">Mi Perfil</h2>
+            <p class="view-subtitle">Datos Profesionales</p>
+          </div>
+
+          <div class="profile-card-header">
+            <div class="avatar-editable-wrapper">
+              <div class="profile-avatar" id="vet-avatar-display"><span data-icon="stethoscope" data-icon-size="38"></span></div>
+              <button type="button" class="avatar-edit-btn" id="btn-edit-vet-avatar" title="Cambiar foto de perfil"><span data-icon="camera" data-icon-size="15"></span></button>
+            </div>
+            <h3 id="vet-profile-display-name" class="profile-name">Dr. Sergio Medina</h3>
+            <p id="vet-profile-display-email" class="profile-email">sergio@gmail.com</p>
+            <button id="btn-toggle-edit-vet" class="edit-mode-btn"><span data-icon="pencil" data-icon-size="14"></span> Editar Datos</button>
+          </div>
+
+          <form id="form-profile-vet" class="data-card" onsubmit="event.preventDefault();">
+            <div class="form-group-editable">
+              <label for="vet-prof-nombre">Nombre Completo</label>
+              <input type="text" id="vet-prof-nombre" disabled>
+            </div>
+            <div class="form-group-editable">
+              <label for="vet-prof-matricula">Número de Matrícula</label>
+              <input type="number" id="vet-prof-matricula" disabled>
+            </div>
+            <div class="form-group-editable">
+              <label for="vet-prof-especialidad">Especialidad</label>
+              <input type="text" id="vet-prof-especialidad" disabled>
+            </div>
+            <div class="form-group-editable">
+              <label for="vet-prof-horario">Horarios de Atención</label>
+              <input type="text" id="vet-prof-horario" disabled>
+            </div>
+
+            <button type="submit" id="btn-save-vet-profile" class="btn-orange" style="display:none; width:100%; margin-top:15px;">Guardar Cambios</button>
+          </form>
+        </div>
+
+      </main>
+
+      <!-- Barra de navegación inferior -->
+      <nav id="app-bottom-nav" class="bottom-nav">
+        <!-- Renderizado dinámico de los botones según el rol -->
+      </nav>
+    </div>
+
+    <!-- ================= MODALES DEL SISTEMA (Ubicados DENTRO de app-container) ================= -->
+
+    <!-- 1. Modal: Agregar Mascota -->
+    <div id="modal-add-pet" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3 class="modal-title">Agregar Mascota</h3>
+          <button id="btn-close-modal-pet" class="modal-close-btn">&times;</button>
+        </div>
+        <form id="form-add-pet" onsubmit="event.preventDefault();">
+          <div class="form-group">
+            <label for="pet-add-nombre">Nombre de la Mascota</label>
+            <input type="text" id="pet-add-nombre" required placeholder="ej. Floki">
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="pet-add-especie">Especie</label>
+              <select id="pet-add-especie" required>
+                <option value="Perro">Perro</option>
+                <option value="Gato">Gato</option>
+                <option value="Roedor">Roedor (Hámster/Conejo)</option>
+                <option value="Ave">Ave</option>
+                <option value="Reptil">Reptil</option>
+                <option value="Pez">Pez</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="pet-add-raza">Raza</label>
+              <input type="text" id="pet-add-raza" required placeholder="ej. Mestizo o Golden">
+            </div>
+          </div>
+          
+          <!-- Selector de Avatar para Personalización: ícono por especie o foto propia -->
+          <div class="form-group">
+            <label>Foto o Ícono de la Mascota</label>
+            <div class="pet-avatar-picker">
+              <div class="pet-avatar-preview" id="pet-add-avatar-preview"><span data-icon="paw" data-icon-size="30"></span></div>
+              <div class="pet-avatar-picker-actions">
+                <button type="button" class="btn-avatar-option" id="btn-pet-add-upload">
+                  <span data-icon="camera" data-icon-size="15"></span> Subir Foto
+                </button>
+                <input type="file" id="pet-add-photo-input" accept="image/*" style="display:none;">
+                <div class="pet-icon-grid" id="pet-add-icon-grid">
+                  <!-- Íconos de especies renderizados dinámicamente -->
+                </div>
+              </div>
+            </div>
+            <input type="hidden" id="pet-add-avatar-type" value="icon">
+            <input type="hidden" id="pet-add-avatar-value" value="paw">
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="pet-add-edad">Fecha de Nacimiento</label>
+              <input type="date" id="pet-add-edad" required>
+            </div>
+            <div class="form-group">
+              <label for="pet-add-peso">Peso (Kg)</label>
+              <input type="number" step="0.1" id="pet-add-peso" required placeholder="ej. 15.5">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="pet-add-color">Color</label>
+            <input type="text" id="pet-add-color" required placeholder="ej. Gris o Negro y Blanco">
+          </div>
+          <div class="form-group">
+            <label for="pet-add-condicion">Condición Previa (Opcional)</label>
+            <input type="text" id="pet-add-condicion" placeholder="ej. Alergias, asma, etc.">
+          </div>
+          <input type="hidden" id="pet-edit-id" value="">
+          <button type="submit" id="btn-submit-pet" class="btn-submit">Guardar Mascota</button>
+          <button type="button" id="btn-cancel-modal-pet" class="btn-cancel">Cancelar</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. Modal: Nuevo Turno -->
+    <div id="modal-new-appt" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3 class="modal-title">Nuevo Turno</h3>
+          <button id="btn-close-modal-appt" class="modal-close-btn">&times;</button>
+        </div>
+        <form id="form-new-appt" onsubmit="event.preventDefault();">
+          <div class="form-group">
+            <label for="appt-select-mascota">Seleccionar Mascota</label>
+            <select id="appt-select-mascota" required>
+              <!-- Opciones cargadas dinámicamente -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="appt-select-veterinario">Seleccionar Veterinario / Especialidad</label>
+            <select id="appt-select-veterinario" required>
+              <!-- Opciones cargadas dinámicamente -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="appt-datetime">Fecha y Hora</label>
+            <input type="datetime-local" id="appt-datetime" required>
+          </div>
+          <div class="form-group">
+            <label for="appt-motivo">Motivo de la Consulta</label>
+            <input type="text" id="appt-motivo" required placeholder="ej. Vacuna anual, control de alergias, etc.">
+          </div>
+          <input type="hidden" id="appt-edit-id" value="">
+          <button type="submit" id="btn-submit-appt" class="btn-submit">Reservar Turno</button>
+          <button type="button" id="btn-cancel-modal-appt" class="btn-cancel">Cancelar</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 3. Modal: Atender Consulta (Veterinario) -->
+    <div id="modal-attend-consult" class="modal-overlay">
+      <div class="modal-container" style="max-height: 90%;">
+        <div class="modal-header">
+          <h3 class="modal-title">Atender Consulta</h3>
+          <button id="btn-close-modal-consult" class="modal-close-btn">&times;</button>
+        </div>
+        <form id="form-attend-consult" onsubmit="event.preventDefault();">
+          <div class="info-field-bubble">
+            <label>Mascota a Atender</label>
+            <div id="consult-display-pet" class="value">-</div>
+          </div>
+
+          <div class="form-group">
+            <label for="consult-diagnostico">Diagnóstico Médico</label>
+            <textarea id="consult-diagnostico" rows="3" required placeholder="ej. Otitis externa bilateral. Se observa enrojecimiento..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="consult-tratamiento">Tratamiento Recomendado</label>
+            <textarea id="consult-tratamiento" rows="3" required placeholder="ej. Limpieza diaria y aplicación de gotas óticas..."></textarea>
+          </div>
+
+          <div class="info-section-title">Prescripción de Medicamento</div>
+          
+          <div class="form-group">
+            <label for="consult-select-med">Medicamento</label>
+            <select id="consult-select-med">
+              <option value="">-- Sin prescripción --</option>
+              <!-- Medicamentos cargados dinámicamente -->
+            </select>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="consult-dosis">Dosis (ej. 1 comprimido, 5 gotas)</label>
+              <input type="text" id="consult-dosis" placeholder="1">
+            </div>
+            <div class="form-group">
+              <label for="consult-frecuencia">Frecuencia (Cada X horas)</label>
+              <input type="number" id="consult-frecuencia" placeholder="12">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="consult-duracion">Duración del Tratamiento (Días)</label>
+            <input type="number" id="consult-duracion" placeholder="7">
+          </div>
+
+          <div class="form-group">
+            <label for="consult-reaccion">Posibles Reacciones Adversas (Opcional)</label>
+            <input type="text" id="consult-reaccion" placeholder="ej. Somnolencia, irritabilidad gástrica">
+          </div>
+
+          <input type="hidden" id="consult-appt-id" value="">
+          <button type="submit" class="btn-submit">Finalizar Consulta y Guardar Historial</button>
+          <button type="button" id="btn-cancel-modal-consult" class="btn-cancel">Cancelar</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 4. Modal: Ver Historial Paciente (Veterinario / Buscador) -->
+    <div id="modal-view-history" class="modal-overlay">
+      <div class="modal-container" style="max-height: 90%;">
+        <div class="modal-header">
+          <h3 class="modal-title">Ficha Paciente</h3>
+          <button id="btn-close-modal-history" class="modal-close-btn">&times;</button>
+        </div>
+        <div id="history-modal-content">
+          <!-- Contenido renderizado dinámicamente -->
+        </div>
+        <button type="button" id="btn-close-history-footer" class="btn-submit" style="margin-top: 15px;">Cerrar Ficha</button>
+      </div>
+    </div>
+
+    <!-- 5. Modal: Editar Veterinario (accesible por cualquier veterinario) -->
+    <div id="modal-edit-vet" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3 class="modal-title">Editar Veterinario</h3>
+          <button id="btn-close-modal-edit-vet" class="modal-close-btn">&times;</button>
+        </div>
+        <form id="form-edit-vet" onsubmit="event.preventDefault();">
+          <div class="form-group">
+            <label for="edit-vet-nombre">Nombre Completo</label>
+            <input type="text" id="edit-vet-nombre" required placeholder="ej. Sergio Medina">
+          </div>
+          <div class="form-group">
+            <label for="edit-vet-matricula">Número de Matrícula</label>
+            <input type="number" id="edit-vet-matricula" required placeholder="ej. 112233">
+          </div>
+          <div class="form-group">
+            <label for="edit-vet-especialidad">Especialidad</label>
+            <input type="text" id="edit-vet-especialidad" required placeholder="ej. Dermatología">
+          </div>
+          <div class="form-group">
+            <label for="edit-vet-horario">Horarios de Atención</label>
+            <input type="text" id="edit-vet-horario" required placeholder="ej. 09:00 - 13:00">
+          </div>
+          <input type="hidden" id="edit-vet-id" value="">
+          <button type="submit" class="btn-submit">Guardar Cambios</button>
+          <button type="button" id="btn-delete-vet" class="btn-cancel" style="color:#C0392B;"><span data-icon="trash" data-icon-size="15"></span> Eliminar Veterinario</button>
+          <button type="button" id="btn-cancel-modal-edit-vet" class="btn-cancel">Cancelar</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 6. Modal: Selector de Avatar de Perfil (foto o ícono) -->
+    <div id="modal-avatar-picker" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3 class="modal-title" id="avatar-picker-title">Foto de Perfil</h3>
+          <button id="btn-close-modal-avatar" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="pet-avatar-picker" style="flex-direction:column; align-items:center;">
+          <div class="pet-avatar-preview" id="avatar-picker-preview" style="width:90px; height:90px;"><span data-icon="user" data-icon-size="34"></span></div>
+          <button type="button" class="btn-avatar-option" id="btn-avatar-picker-upload" style="margin-top:14px;">
+            <span data-icon="camera" data-icon-size="15"></span> Subir Foto
+          </button>
+          <input type="file" id="avatar-picker-photo-input" accept="image/*" style="display:none;">
+          <p class="info-section-title" style="font-size:13px; margin:16px 0 8px 0; text-align:left; width:100%;">O elegí un ícono</p>
+          <div class="pet-icon-grid" id="avatar-picker-icon-grid" style="width:100%; justify-content:flex-start;">
+            <!-- Íconos renderizados dinámicamente -->
+          </div>
+        </div>
+        <button type="button" id="btn-confirm-avatar" class="btn-submit" style="margin-top:18px;">Listo</button>
+      </div>
+    </div>
+
+  </div> <!-- /app-container -->
+
+  <!-- Scripts -->
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
